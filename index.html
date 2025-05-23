@@ -1,129 +1,174 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>未来シミュレーション</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>遠いストーリー</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f0f8ff; }
-    .question { margin-bottom: 20px; }
-    button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
-    #result { font-size: 1.2em; margin-top: 30px; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .bar {
+      background: #007acc;
+      height: 10px;
+      transition: width 1s ease-out;
+    }
+    .space-background {
+      background: linear-gradient(#0d1b2a, #1b263b);
+      background-image: radial-gradient(white 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>未来シミュレーション</h1>
-  <div id="game"></div>
-  <div id="result"></div>
-
-  <script>
-    const parameters = {
-      environment: 50,
-      economy: 50,
-      healthcare: 50
-    };
-
-    const choices = [
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script type="text/babel">
+    const SCENARIOS = [
       {
-        event: "産業革命が起こる",
-        options: [
-          { text: "工場の設立を促進する", effect: { environment: -10, economy: +15, healthcare: 0 } },
-          { text: "自然保護のため制限をかける", effect: { environment: +10, economy: -5, healthcare: 0 } },
-          { text: "医療機器開発に力を入れる", effect: { environment: -5, economy: +5, healthcare: +10 } }
+        era: "過去（1800年）",
+        background: "#fef6e4",
+        events: [
+          { question: "産業革命が始まり、大量生産が可能になった", options: ["機械化を推進する", "手工業を守る", "労働環境を改善"] },
+          { question: "森林伐採が進む", options: ["木材確保を優先", "植林を義務づける", "伐採制限を設ける"] },
+          { question: "感染症が流行", options: ["都市封鎖する", "ワクチン研究に投資", "自己判断に任せる"] },
+          { question: "近代教育制度の導入", options: ["義務教育を推進", "家庭教育を重視", "職業訓練に力を入れる"] },
+          { question: "戦争の頻発", options: ["軍備拡張", "平和条約の締結", "国際連盟に参加"] }
         ]
       },
       {
-        event: "世界大戦が勃発する",
-        options: [
-          { text: "大量生産で戦争を支える", effect: { environment: -10, economy: +10, healthcare: -5 } },
-          { text: "外交による停戦を目指す", effect: { environment: +5, economy: -5, healthcare: +5 } },
-          { text: "軍事医療技術を開発する", effect: { environment: -5, economy: 0, healthcare: +15 } }
-        ]
+        era: "現在（2025年）",
+        background: "#e0f7fa",
+        showStats: true
       },
       {
-        event: "AIの技術革新が進む",
-        options: [
-          { text: "AIの自由な開発を許可する", effect: { environment: 0, economy: +15, healthcare: +5 } },
-          { text: "慎重に規制をかける", effect: { environment: +5, economy: -5, healthcare: 0 } },
-          { text: "医療AIに集中投資する", effect: { environment: 0, economy: +5, healthcare: +15 } }
-        ]
-      },
-      {
-        event: "地球温暖化が深刻化する",
-        options: [
-          { text: "化石燃料を減らす法律を作る", effect: { environment: +15, economy: -10, healthcare: 0 } },
-          { text: "経済優先で対策を遅らせる", effect: { environment: -15, economy: +10, healthcare: -5 } },
-          { text: "クリーン技術に投資する", effect: { environment: +10, economy: +5, healthcare: +5 } }
-        ]
-      },
-      {
-        event: "火星移住プロジェクトが始動する",
-        options: [
-          { text: "資源を宇宙開発に集中する", effect: { environment: -5, economy: +15, healthcare: 0 } },
-          { text: "地球の環境保護を優先する", effect: { environment: +10, economy: -5, healthcare: 0 } },
-          { text: "宇宙医療の開発に注力する", effect: { environment: -5, economy: 0, healthcare: +15 } }
-        ]
-      },
-      {
-        event: "人類の寿命が120歳を超える",
-        options: [
-          { text: "高齢者医療を手厚くする", effect: { environment: -5, economy: -5, healthcare: +20 } },
-          { text: "安楽死制度を導入する", effect: { environment: +5, economy: 0, healthcare: +5 } },
-          { text: "年金制度を改革する", effect: { environment: 0, economy: +10, healthcare: 0 } }
+        era: "未来（2120年）",
+        background: "space-background",
+        textColor: "white",
+        events: [
+          { question: "宇宙移住が現実化", options: ["地球に残る", "火星へ移住", "宇宙ホテルを作る"] },
+          { question: "AIが全職業を代替", options: ["共存職を創出", "ベーシックインカム導入", "AI制限法案を作る"] },
+          { question: "外交関係の再構築", options: ["宇宙連合を設立", "多国間会議を定期開催", "国益優先政策"] },
+          { question: "医療が完全自動化", options: ["ロボット医師の普及", "対面重視", "遠隔治療特化"] },
+          { question: "教育が全VR化", options: ["VR教材を整備", "従来の教室維持", "選択制にする"] }
         ]
       }
     ];
 
-    let index = 0;
+    const INITIAL_STATS = {
+      environment: 50,
+      economy: 50,
+      health: 50,
+      education: 50,
+      defense: 50,
+      diplomacy: 50
+    };
 
-    function showNext() {
-      const gameDiv = document.getElementById("game");
-      gameDiv.innerHTML = "";
+    const App = () => {
+      const [step, setStep] = React.useState(0);
+      const [stats, setStats] = React.useState(INITIAL_STATS);
+      const [history, setHistory] = React.useState([]);
+      const [eventIndex, setEventIndex] = React.useState(0);
 
-      if (index >= choices.length) {
-        showResult();
-        return;
-      }
+      const scenario = SCENARIOS[step] || {};
+      const statKeys = Object.keys(INITIAL_STATS);
 
-      const current = choices[index];
-      const question = document.createElement("div");
-      question.className = "question";
-      question.innerHTML = `<h2>出来事 ${index + 1}：${current.event}</h2>`;
-      gameDiv.appendChild(question);
+      const handleChoice = (index) => {
+        const impact = [10, -5, 5][index];
+        const affectedKey = statKeys[eventIndex % statKeys.length];
+        const newStats = { ...stats, [affectedKey]: stats[affectedKey] + impact };
 
-      current.options.forEach(option => {
-        const btn = document.createElement("button");
-        btn.textContent = option.text;
-        btn.onclick = () => {
-          parameters.environment += option.effect.environment;
-          parameters.economy += option.effect.economy;
-          parameters.healthcare += option.effect.healthcare;
-          index++;
-          showNext();
-        };
-        gameDiv.appendChild(btn);
-      });
-    }
+        setStats(newStats);
+        setHistory([...history, index]);
 
-    function showResult() {
-      let resultText = "あなたの選んだ未来は… ";
-      const { environment, economy, healthcare } = parameters;
-      if (environment > 70 && economy > 70 && healthcare > 70) {
-        resultText += "理想的な持続可能未来です！";
-      } else if (environment < 30) {
-        resultText += "環境破壊が進んだ未来です。";
-      } else if (economy < 30) {
-        resultText += "経済格差が広がった未来です。";
-      } else if (healthcare < 30) {
-        resultText += "医療が崩壊した未来です。";
-      } else {
-        resultText += "それなりにバランスの取れた未来です。";
-      }
+        if (eventIndex + 1 < scenario.events.length) {
+          setEventIndex(eventIndex + 1);
+        } else {
+          setStep(step + 1);
+          setEventIndex(0);
+        }
+      };
 
-      document.getElementById("result").textContent = resultText;
-    }
+      const renderBar = (label, value) => (
+        <div style={{ marginBottom: 10 }}>
+          <strong>{label}</strong>
+          <div style={{ background: '#ddd', height: 10, width: '100%' }}>
+            <div className="bar" style={{ width: `${value}%` }}></div>
+          </div>
+        </div>
+      );
 
-    showNext();
+      const renderStats = () => (
+        <div style={{ padding: 20 }}>
+          <h2>今の世界の状態</h2>
+          {renderBar("環境", stats.environment)}
+          {renderBar("経済", stats.economy)}
+          {renderBar("医療", stats.health)}
+          {renderBar("教育", stats.education)}
+          {renderBar("国防", stats.defense)}
+          {renderBar("外交", stats.diplomacy)}
+          <button onClick={() => setStep(step + 1)}>次へ進む</button>
+        </div>
+      );
+
+      const renderResult = () => {
+        const total = Object.values(stats).reduce((a, b) => a + b, 0);
+        let ending = "未知の未来";
+        if (total > 280) ending = "理想的な未来";
+        else if (total > 240) ending = "発展した未来";
+        else if (total > 180) ending = "不安な未来";
+        else ending = "荒廃した未来";
+
+        return (
+          <div className="space-background" style={{ padding: 40, color: 'white', minHeight: '100vh' }}>
+            <h1 style={{ fontSize: "2em" }}>{ending}</h1>
+            <p>あなたの選択によって形成された未来:</p>
+            {renderBar("環境", stats.environment)}
+            {renderBar("経済", stats.economy)}
+            {renderBar("医療", stats.health)}
+            {renderBar("教育", stats.education)}
+            {renderBar("国防", stats.defense)}
+            {renderBar("外交", stats.diplomacy)}
+          </div>
+        );
+      };
+
+      if (step >= SCENARIOS.length) return renderResult();
+      if (scenario.showStats) return renderStats();
+
+      const currentEvent = scenario.events[eventIndex];
+
+      return (
+        <div className={scenario.background === 'space-background' ? 'space-background' : ''} style={{ background: scenario.background !== 'space-background' ? scenario.background : undefined, color: scenario.textColor || 'black', minHeight: '100vh', padding: 20 }}>
+          <h1 style={{ textAlign: "center" }}>遠いストーリー</h1>
+          <h2>{scenario.era}</h2>
+          <div style={{ marginBottom: 40 }}>
+            <h3>{currentEvent.question}</h3>
+            {currentEvent.options.map((opt, i) => (
+              <button key={i} onClick={() => handleChoice(i)}>{opt}</button>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById("root"));
   </script>
 </body>
 </html>
