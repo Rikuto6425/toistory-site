@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>未来シミュレーション</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f0f8ff; }
+    .question { margin-bottom: 20px; }
+    button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
+    #result { font-size: 1.2em; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h1>未来シミュレーション</h1>
+  <div id="game"></div>
+  <div id="result"></div>
+
+  <script>
+    const parameters = {
+      environment: 50,
+      economy: 50,
+      healthcare: 50
+    };
+
+    const choices = [
+      {
+        event: "産業革命が起こる",
+        options: [
+          { text: "工場の設立を促進する", effect: { environment: -10, economy: +15, healthcare: 0 } },
+          { text: "自然保護のため制限をかける", effect: { environment: +10, economy: -5, healthcare: 0 } },
+          { text: "医療機器開発に力を入れる", effect: { environment: -5, economy: +5, healthcare: +10 } }
+        ]
+      },
+      {
+        event: "世界大戦が勃発する",
+        options: [
+          { text: "大量生産で戦争を支える", effect: { environment: -10, economy: +10, healthcare: -5 } },
+          { text: "外交による停戦を目指す", effect: { environment: +5, economy: -5, healthcare: +5 } },
+          { text: "軍事医療技術を開発する", effect: { environment: -5, economy: 0, healthcare: +15 } }
+        ]
+      },
+      {
+        event: "AIの技術革新が進む",
+        options: [
+          { text: "AIの自由な開発を許可する", effect: { environment: 0, economy: +15, healthcare: +5 } },
+          { text: "慎重に規制をかける", effect: { environment: +5, economy: -5, healthcare: 0 } },
+          { text: "医療AIに集中投資する", effect: { environment: 0, economy: +5, healthcare: +15 } }
+        ]
+      },
+      {
+        event: "地球温暖化が深刻化する",
+        options: [
+          { text: "化石燃料を減らす法律を作る", effect: { environment: +15, economy: -10, healthcare: 0 } },
+          { text: "経済優先で対策を遅らせる", effect: { environment: -15, economy: +10, healthcare: -5 } },
+          { text: "クリーン技術に投資する", effect: { environment: +10, economy: +5, healthcare: +5 } }
+        ]
+      },
+      {
+        event: "火星移住プロジェクトが始動する",
+        options: [
+          { text: "資源を宇宙開発に集中する", effect: { environment: -5, economy: +15, healthcare: 0 } },
+          { text: "地球の環境保護を優先する", effect: { environment: +10, economy: -5, healthcare: 0 } },
+          { text: "宇宙医療の開発に注力する", effect: { environment: -5, economy: 0, healthcare: +15 } }
+        ]
+      },
+      {
+        event: "人類の寿命が120歳を超える",
+        options: [
+          { text: "高齢者医療を手厚くする", effect: { environment: -5, economy: -5, healthcare: +20 } },
+          { text: "安楽死制度を導入する", effect: { environment: +5, economy: 0, healthcare: +5 } },
+          { text: "年金制度を改革する", effect: { environment: 0, economy: +10, healthcare: 0 } }
+        ]
+      }
+    ];
+
+    let index = 0;
+
+    function showNext() {
+      const gameDiv = document.getElementById("game");
+      gameDiv.innerHTML = "";
+
+      if (index >= choices.length) {
+        showResult();
+        return;
+      }
+
+      const current = choices[index];
+      const question = document.createElement("div");
+      question.className = "question";
+      question.innerHTML = `<h2>出来事 ${index + 1}：${current.event}</h2>`;
+      gameDiv.appendChild(question);
+
+      current.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option.text;
+        btn.onclick = () => {
+          parameters.environment += option.effect.environment;
+          parameters.economy += option.effect.economy;
+          parameters.healthcare += option.effect.healthcare;
+          index++;
+          showNext();
+        };
+        gameDiv.appendChild(btn);
+      });
+    }
+
+    function showResult() {
+      let resultText = "あなたの選んだ未来は… ";
+      const { environment, economy, healthcare } = parameters;
+      if (environment > 70 && economy > 70 && healthcare > 70) {
+        resultText += "理想的な持続可能未来です！";
+      } else if (environment < 30) {
+        resultText += "環境破壊が進んだ未来です。";
+      } else if (economy < 30) {
+        resultText += "経済格差が広がった未来です。";
+      } else if (healthcare < 30) {
+        resultText += "医療が崩壊した未来です。";
+      } else {
+        resultText += "それなりにバランスの取れた未来です。";
+      }
+
+      document.getElementById("result").textContent = resultText;
+    }
+
+    showNext();
+  </script>
+</body>
+</html>
