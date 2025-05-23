@@ -42,14 +42,14 @@
   <script type="text/babel">
     const SCENARIOS = [
       {
-        era: "過去（1800年）",
+        era: "過去",
         background: "#fef6e4",
         events: [
-          { question: "産業革命が始まり、大量生産が可能になった", options: ["機械化を推進する", "手工業を守る", "労働環境を改善"] },
-          { question: "森林伐採が進む", options: ["木材確保を優先", "植林を義務づける", "伐採制限を設ける"] },
-          { question: "感染症が流行", options: ["都市封鎖する", "ワクチン研究に投資", "自己判断に任せる"] },
-          { question: "近代教育制度の導入", options: ["義務教育を推進", "家庭教育を重視", "職業訓練に力を入れる"] },
-          { question: "戦争の頻発", options: ["軍備拡張", "平和条約の締結", "国際連盟に参加"] }
+          { question: "産業革命が始まり、大量生産が可能に...", options: ["機械化を推進する", "手工業を守り機械を破壊する", "労働環境を改善し人権を守る"] },
+          { question: "冷戦が起きる", options: ["アメリカの犬になる", "マルクスを崇拝する", "核を開発する"] },
+          { question: "第二次世界大戦が勃発...", options: ["軍備拡張", "平和条約の締結", "国際連盟に参加"] },
+          { question: "スペイン風邪が流行！", options: ["都市封鎖を行い流行を防ぐ", "ワクチン研究に投資し開発を急ぐ", "経済を優先させるため自己判断に任せる"]}
+          { question: "戦後、教育に力を入れる国が増える", options: ["義務教育を推進", "家庭教育を重視", "赤紙を刷りまくる"] },
         ]
       },
       {
@@ -59,12 +59,12 @@
       },
       {
         era: "未来（2120年）",
-        background: "space-background",
+        background: "#04032e",
         textColor: "white",
         events: [
-          { question: "宇宙移住が現実化", options: ["地球に残る", "火星へ移住", "宇宙ホテルを作る"] },
+          { question: "宇宙移住プロジェクトが始動", options: ["地球に残る", "火星へ移住", "宇宙ホテルを作る"] },
           { question: "AIが全職業を代替", options: ["共存職を創出", "ベーシックインカム導入", "AI制限法案を作る"] },
-          { question: "外交関係の再構築", options: ["宇宙連合を設立", "多国間会議を定期開催", "国益優先政策"] },
+          { question: "世界統一国家の設立が提唱される", options: ["宇宙連合を設立", "多国間会議を定期開催", "国益優先政策"] },
           { question: "医療が完全自動化", options: ["ロボット医師の普及", "対面重視", "遠隔治療特化"] },
           { question: "教育が全VR化", options: ["VR教材を整備", "従来の教室維持", "選択制にする"] }
         ]
@@ -123,7 +123,7 @@
           {renderBar("教育", stats.education)}
           {renderBar("国防", stats.defense)}
           {renderBar("外交", stats.diplomacy)}
-          <button onClick={() => setStep(step + 1)}>次へ進む</button>
+          <button onClick={() => setStep(step + 1)}>未来へ</button>
         </div>
       );
 
