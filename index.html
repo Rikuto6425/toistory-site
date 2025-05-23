@@ -2,209 +2,126 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>遠いストーリー</title>
+  <title>未来シミュレーション</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: "Arial", sans-serif;
+      padding: 40px;
+      background-color: #f4f4f4;
     }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-size: 1em;
-      cursor: pointer;
-      margin-top: 10px;
-      display: block;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .bar {
-      background: #007acc;
-      height: 10px;
-      transition: width 1s ease-out;
-    }
-    .space-background {
-      background: linear-gradient(#0d1b2a, #1b263b);
-      background-image: radial-gradient(white 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
-    .center-title {
+
+    h1 {
+      font-size: 2rem;
       text-align: center;
-      font-size: 2.5em;
+    }
+
+    .center-text {
+      font-size: 2rem;
       font-weight: bold;
-      margin-bottom: 20px;
+      color: #2c3e50;
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .story-section {
+      margin-bottom: 2rem;
     }
   </style>
 </head>
 <body>
   <div id="root"></div>
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
   <script type="text/babel">
-    const SCENARIOS = [
+
+    const statComments = {
+      環境: [
+        "環境保全の努力が実を結び、町には緑が戻り、空気は澄んでいる。",
+        "気候変動への無関心が災いし、猛暑や洪水に悩まされる未来が訪れる。"
+      ],
+      経済: [
+        "地元経済が活性化し、若者も地元で希望を見出せる未来。",
+        "産業衰退により働き口が減り、多くの若者が町を離れる。"
+      ],
+      医療: [
+        "医療の充実で高齢者も安心して暮らせる社会が実現する。",
+        "医療資源の不足で、必要な治療が受けられない人が増える。"
+      ],
+      教育: [
+        "未来の担い手を育てる教育が充実し、知識と創造力に溢れる町となる。",
+        "教育機会の格差が広がり、夢を諦める子どもたちが増える。"
+      ]
+    };
+
+    const specialCombinations = [
       {
-        era: "過去",
-        background: "#fef6e4",
-        events: [
-          { question: "産業革命が始まり、大量生産が可能に...", options: ["機械化を推進する", "手工業を守り機械を破壊する", "労働環境を改善し人権を守る"] },
-          { question: "冷戦が起きる", options: ["アメリカの犬になる", "マルクスを崇拝する", "核を開発する"] },
-          { question: "第二次世界大戦が勃発...", options: ["軍備拡張", "平和条約の締結", "国際連盟に参加"] },
-          { question: "スペイン風邪が流行！", options: ["都市封鎖を行い流行を防ぐ", "ワクチン研究に投資し開発を急ぐ", "経済を優先させるため自己判断に任せる"] },
-          { question: "戦後、教育に力を入れる国が増える", options: ["義務教育を推進", "家庭教育を重視", "赤紙を刷りまくる"] },
-        ]
+        condition: stats => stats.教育 > 60 && stats.経済 > 60,
+        message: "教育と経済の相乗効果でイノベーション国家が誕生した！"
       },
       {
-        era: "現在（2025年）",
-        background: "#e0f7fa",
-        showStats: true
+        condition: stats => stats.環境 > 70 && stats.医療 > 70,
+        message: "自然と共存する福祉社会が築かれた。"
       },
       {
-        era: "未来（2120年）",
-        background: "#04032e",
-        textColor: "white",
-        events: [
-          { question: "宇宙移住プロジェクトが始動", options: ["地球に残る", "火星へ移住", "宇宙ホテルを作る"] },
-          { question: "AIが全職業を代替", options: ["共存職を創出", "ベーシックインカム導入", "AI制限法案を作る"] },
-          { question: "世界統一国家の設立が提唱される", options: ["宇宙連合を設立", "多国間会議を定期開催", "国益優先政策"] },
-          { question: "医療が完全自動化", options: ["ロボット医師の普及", "対面重視", "遠隔治療特化"] },
-          { question: "教育が全VR化", options: ["VR教材を整備", "従来の教室維持", "選択制にする"] }
-        ]
+        condition: stats => stats.教育 < 40 && stats.経済 < 40,
+        message: "教育と経済が崩壊し、国家の未来が閉ざされた。"
       }
     ];
 
-    const INITIAL_STATS = {
-      environment: 50,
-      economy: 50,
-      health: 50,
-      education: 50,
-      defense: 50,
-      diplomacy: 50
-    };
+    const FinalNarration = ({ stats }) => {
+      const results = [];
 
-    const describeStat = (key, value) => {
-      if (value >= 80) return `${key}が非常に発展した`;
-      if (value >= 60) return `${key}が安定している`;
-      if (value >= 40) return `${key}にやや不安がある`;
-      return `${key}が深刻な状況にある`;
-    };
+      for (let key in stats) {
+        const value = stats[key];
+        const comment = value >= 50 ? statComments[key][0] : statComments[key][1];
+        results.push(`${key}：${comment}`);
+      }
 
-    const getSpecialOutcomes = (stats) => {
-      const outcomes = [];
-      if (stats.economy >= 70 && stats.education >= 70) outcomes.push("教育と経済が高水準で維持され、イノベーション国家が誕生した。");
-      if (stats.defense >= 70 && stats.diplomacy < 40) outcomes.push("軍事力偏重により、国際社会で孤立した未来が訪れた。");
-      if (stats.environment < 40 && stats.economy > 70) outcomes.push("経済成長の裏で環境破壊が進み、気候変動が深刻化した。");
-      if (stats.health > 80 && stats.education > 80) outcomes.push("知識と医療の融合で長寿社会が実現した。");
-      return outcomes;
-    };
+      const special = specialCombinations
+        .filter(s => s.condition(stats))
+        .map(s => s.message);
 
-    const getEnding = (total) => {
-      if (total > 280) return "理想的な未来";
-      if (total > 240) return "発展した未来";
-      if (total > 180) return "不安な未来";
-      return "荒廃した未来";
+      const idealFuture = "理想の未来：誰もが笑顔で暮らせる持続可能な社会の実現！";
+
+      return (
+        <div>
+          <div className="center-text">{idealFuture}</div>
+          <div className="story-section">
+            <h2>あなたの選択によって導かれた未来:</h2>
+            <ul>
+              {results.map((r, i) => <li key={i}>{r}</li>)}
+            </ul>
+            {special.length > 0 && (
+              <React.Fragment>
+                <h3>特別な未来:</h3>
+                <ul>
+                  {special.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </React.Fragment>
+            )}
+          </div>
+        </div>
+      );
     };
 
     const App = () => {
-      const [step, setStep] = React.useState(0);
-      const [stats, setStats] = React.useState(INITIAL_STATS);
-      const [history, setHistory] = React.useState([]);
-      const [eventIndex, setEventIndex] = React.useState(0);
-
-      const scenario = SCENARIOS[step] || {};
-      const statKeys = Object.keys(INITIAL_STATS);
-
-      const handleChoice = (index) => {
-        const impact = [10, -5, 5][index];
-        const affectedKey = statKeys[eventIndex % statKeys.length];
-        const newStats = { ...stats, [affectedKey]: stats[affectedKey] + impact };
-        setStats(newStats);
-        setHistory([...history, index]);
-
-        if (eventIndex + 1 < scenario.events.length) {
-          setEventIndex(eventIndex + 1);
-        } else {
-          setStep(step + 1);
-          setEventIndex(0);
-        }
-      };
-
-      const renderBar = (label, value) => (
-        <div style={{ marginBottom: 10 }}>
-          <strong>{label}</strong>
-          <div style={{ background: '#ddd', height: 10, width: '100%' }}>
-            <div className="bar" style={{ width: `${value}%` }}></div>
-          </div>
-        </div>
-      );
-
-      const renderStats = () => (
-        <div style={{ padding: 20 }}>
-          <h2>今の世界の状態</h2>
-          {renderBar("環境", stats.environment)}
-          {renderBar("経済", stats.economy)}
-          {renderBar("医療", stats.health)}
-          {renderBar("教育", stats.education)}
-          {renderBar("国防", stats.defense)}
-          {renderBar("外交", stats.diplomacy)}
-          <button onClick={() => setStep(step + 1)}>未来へ</button>
-        </div>
-      );
-
-      const renderResult = () => {
-        const total = Object.values(stats).reduce((a, b) => a + b, 0);
-        const ending = getEnding(total);
-        const comments = Object.entries(stats).map(([key, value]) => (
-          <li key={key}>{describeStat(key, value)}</li>
-        ));
-        const special = getSpecialOutcomes(stats);
-
-        return (
-          <div className="space-background" style={{ padding: 40, color: 'white', minHeight: '100vh' }}>
-            <div className="center-title">{ending}</div>
-            <p>あなたの選択によって形成された未来:</p>
-            <ul>{comments}</ul>
-            {special.length > 0 && (
-  <React.Fragment>
-    <h3>特別な未来:</h3>
-    <ul>{special.map((s, i) => <li key={i}>{s}</li>)}</ul>
-  </React.Fragment>
-)}
-            {renderBar("環境", stats.environment)}
-            {renderBar("経済", stats.economy)}
-            {renderBar("医療", stats.health)}
-            {renderBar("教育", stats.education)}
-            {renderBar("国防", stats.defense)}
-            {renderBar("外交", stats.diplomacy)}
-          </div>
-        );
-      };
-
-      if (step >= SCENARIOS.length) return renderResult();
-      if (scenario.showStats) return renderStats();
-
-      const currentEvent = scenario.events[eventIndex];
+      const past = "過去：かつてこの地域は豊かな自然と活気ある産業で知られていた。";
+      const present = "現在：産業構造の変化や少子高齢化により、町は転機を迎えている。";
+      const stats = { 環境: 75, 経済: 65, 医療: 80, 教育: 85 }; // 例としてのデータ
 
       return (
-        <div className={scenario.background === 'space-background' ? 'space-background' : ''} style={{ background: scenario.background !== 'space-background' ? scenario.background : undefined, color: scenario.textColor || 'black', minHeight: '100vh', padding: 20 }}>
-          <h1 style={{ textAlign: "center" }}>遠いストーリー</h1>
-          <h2>{scenario.era}</h2>
-          <div style={{ marginBottom: 40 }}>
-            <h3>{currentEvent.question}</h3>
-            {currentEvent.options.map((opt, i) => (
-              <button key={i} onClick={() => handleChoice(i)}>{opt}</button>
-            ))}
-          </div>
+        <div>
+          <h1>地域の未来ストーリー</h1>
+          <div className="story-section"><strong>{past}</strong></div>
+          <div className="story-section"><strong>{present}</strong></div>
+          <FinalNarration stats={stats} />
         </div>
       );
     };
 
-    ReactDOM.render(<App />, document.getElementById("root"));
+    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
 </html>
