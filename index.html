@@ -1,127 +1,257 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>未来シミュレーション</title>
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <style>
-    body {
-      font-family: "Arial", sans-serif;
-      padding: 40px;
-      background-color: #f4f4f4;
-    }
-
-    h1 {
-      font-size: 2rem;
-      text-align: center;
-    }
-
-    .center-text {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #2c3e50;
-      text-align: center;
-      margin: 40px 0;
-    }
-
-    .story-section {
-      margin-bottom: 2rem;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>未来シミュレーション</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 20px; }
+  #content { margin-bottom: 20px; }
+  button { padding: 10px 15px; margin-top: 10px; }
+  .choice { margin: 10px 0; }
+</style>
 </head>
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
+<div id="content">
+  <!-- ここにシナリオテキストや選択肢を動的に表示 -->
+</div>
 
-    const statComments = {
-      環境: [
-        "環境保全の努力が実を結び、町には緑が戻り、空気は澄んでいる。",
-        "気候変動への無関心が災いし、猛暑や洪水に悩まされる未来が訪れる。"
-      ],
-      経済: [
-        "地元経済が活性化し、若者も地元で希望を見出せる未来。",
-        "産業衰退により働き口が減り、多くの若者が町を離れる。"
-      ],
-      医療: [
-        "医療の充実で高齢者も安心して暮らせる社会が実現する。",
-        "医療資源の不足で、必要な治療が受けられない人が増える。"
-      ],
-      教育: [
-        "未来の担い手を育てる教育が充実し、知識と創造力に溢れる町となる。",
-        "教育機会の格差が広がり、夢を諦める子どもたちが増える。"
+<button id="nextBtn" disabled>次へ</button>
+
+<script>
+(() => {
+  // --- データ ---
+
+  const pastEvents = [
+    {
+      text: "第二次世界大戦が勃発した。",
+      choices: [
+        { text: "軍備拡張を行う", effects: { defense: +30, diplomacy: -10, economy: -10 } },
+        { text: "平和条約を結ぶ", effects: { diplomacy: +25, defense: -20, economy: +10 } },
+        { text: "中立を宣言する", effects: { defense: -10, diplomacy: +10, economy: 0 } }
       ]
-    };
+    },
+    {
+      text: "高度経済成長期に入った。",
+      choices: [
+        { text: "技術開発を推進する", effects: { economy: +30, education: +15 } },
+        { text: "社会福祉を強化する", effects: { health: +20, economy: -5 } },
+        { text: "環境保護を優先する", effects: { environment: +25, economy: -10 } }
+      ]
+    },
+    {
+      text: "冷戦時代の緊張が高まっている。",
+      choices: [
+        { text: "軍備増強を進める", effects: { defense: +30, diplomacy: -15 } },
+        { text: "外交交渉を強化する", effects: { diplomacy: +30, defense: -20 } },
+        { text: "情報戦に注力する", effects: { defense: +10, education: +10 } }
+      ]
+    },
+    {
+      text: "宇宙移住プロジェクトが始まった。",
+      choices: [
+        { text: "積極的に資金投入する", effects: { economy: -20, education: +30 } },
+        { text: "慎重に進める", effects: { economy: 0, education: +10 } },
+        { text: "中止する", effects: { economy: +10, education: -10 } }
+      ]
+    },
+    {
+      text: "地球温暖化の影響が顕著になった。",
+      choices: [
+        { text: "再生可能エネルギーに転換する", effects: { environment: +30, economy: -10 } },
+        { text: "現状維持で経済優先", effects: { economy: +10, environment: -20 } },
+        { text: "新技術で対策を図る", effects: { environment: +15, economy: 0, education: +10 } }
+      ]
+    }
+  ];
 
-    const specialCombinations = [
-      {
-        condition: stats => stats.教育 > 60 && stats.経済 > 60,
-        message: "教育と経済の相乗効果でイノベーション国家が誕生した！"
-      },
-      {
-        condition: stats => stats.環境 > 70 && stats.医療 > 70,
-        message: "自然と共存する福祉社会が築かれた。"
-      },
-      {
-        condition: stats => stats.教育 < 40 && stats.経済 < 40,
-        message: "教育と経済が崩壊し、国家の未来が閉ざされた。"
-      }
-    ];
+  const futureEvents = [
+    {
+      text: "人工知能が社会に浸透した。",
+      choices: [
+        { text: "積極活用で経済成長促進", effects: { economy: +30, education: +10 } },
+        { text: "規制を厳しくする", effects: { defense: +10, economy: -15 } },
+        { text: "倫理基準を制定", effects: { diplomacy: +15, education: +10 } }
+      ]
+    },
+    {
+      text: "人口減少が進行している。",
+      choices: [
+        { text: "移民政策を拡大", effects: { economy: +20, diplomacy: +10 } },
+        { text: "出生率向上策に注力", effects: { health: +15, education: +10 } },
+        { text: "現状維持", effects: { economy: -10 } }
+      ]
+    },
+    {
+      text: "気候変動により大規模災害が増加。",
+      choices: [
+        { text: "災害対策に大規模投資", effects: { environment: +20, economy: -15 } },
+        { text: "国際協力を強化", effects: { diplomacy: +25 } },
+        { text: "対策を先送り", effects: { environment: -30 } }
+      ]
+    },
+    {
+      text: "新たな感染症が世界で流行。",
+      choices: [
+        { text: "医療体制を強化", effects: { health: +30, economy: -10 } },
+        { text: "情報公開を徹底", effects: { diplomacy: +15, health: +10 } },
+        { text: "隔離と封鎖を徹底", effects: { defense: +20, diplomacy: -10 } }
+      ]
+    },
+    {
+      text: "イノベーション国家としての地位を確立。",
+      choices: [
+        { text: "研究開発をさらに推進", effects: { education: +30, economy: +20 } },
+        { text: "技術の公平な普及を図る", effects: { education: +20, diplomacy: +10 } },
+        { text: "規制強化で安全重視", effects: { defense: +15, economy: -10 } }
+      ]
+    }
+  ];
 
-    const FinalNarration = ({ stats }) => {
-      const results = [];
+  const initialParams = {
+    environment: 50,
+    economy: 50,
+    health: 50,
+    education: 50,
+    defense: 50,
+    diplomacy: 50
+  };
 
-      for (let key in stats) {
-        const value = stats[key];
-        const comment = value >= 50 ? statComments[key][0] : statComments[key][1];
-        results.push(`${key}：${comment}`);
-      }
+  // --- 状態管理 ---
 
-      const special = specialCombinations
-        .filter(s => s.condition(stats))
-        .map(s => s.message);
+  let params = {...initialParams};
+  let step = 0; // 0〜4: 過去、5: 現在表示、6〜10: 未来、11: 結果
+  let selectedChoices = []; // 選択肢インデックス記録
 
-      const idealFuture = "理想の未来：誰もが笑顔で暮らせる持続可能な社会の実現！";
+  const contentDiv = document.getElementById("content");
+  const nextBtn = document.getElementById("nextBtn");
 
-      return (
-        <div>
-          <div className="center-text">{idealFuture}</div>
-          <div className="story-section">
-            <h2>あなたの選択によって導かれた未来:</h2>
-            <ul>
-              {results.map((r, i) => <li key={i}>{r}</li>)}
-            </ul>
-            {special.length > 0 && (
-              <React.Fragment>
-                <h3>特別な未来:</h3>
-                <ul>
-                  {special.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </React.Fragment>
-            )}
-          </div>
-        </div>
-      );
-    };
+  // --- ユーティリティ ---
 
-    const App = () => {
-      const past = "過去：かつてこの地域は豊かな自然と活気ある産業で知られていた。";
-      const present = "現在：産業構造の変化や少子高齢化により、町は転機を迎えている。";
-      const stats = { 環境: 75, 経済: 65, 医療: 80, 教育: 85 }; // 例としてのデータ
+  function clamp(val, min = 0, max = 100) {
+    return Math.min(max, Math.max(min, val));
+  }
 
-      return (
-        <div>
-          <h1>地域の未来ストーリー</h1>
-          <div className="story-section"><strong>{past}</strong></div>
-          <div className="story-section"><strong>{present}</strong></div>
-          <FinalNarration stats={stats} />
-        </div>
-      );
-    };
+  // パラメータの変動反映
+  function applyEffects(effects) {
+    for (const key in effects) {
+      params[key] = clamp(params[key] + effects[key]);
+    }
+  }
 
-    ReactDOM.render(<App />, document.getElementById('root'));
-  </script>
-</body>
-</html>
+  // パラメータを文字列で見やすく表示
+  function renderParams() {
+    return `
+      <h3>現在のパラメータ状況</h3>
+      <ul>
+        <li>環境: ${params.environment}</li>
+        <li>経済: ${params.economy}</li>
+        <li>健康: ${params.health}</li>
+        <li>教育: ${params.education}</li>
+        <li>防衛: ${params.defense}</li>
+        <li>外交: ${params.diplomacy}</li>
+      </ul>
+    `;
+  }
+
+  // --- 表示処理 ---
+
+  // 選択肢表示とクリック処理
+  function renderEvent(eventObj, eventIndex) {
+    contentDiv.innerHTML = `<p>${eventObj.text}</p>`;
+    const choicesHtml = eventObj.choices.map((choice, idx) =>
+      `<div class="choice"><button data-choice="${idx}">${choice.text}</button></div>`
+    ).join("");
+    contentDiv.innerHTML += choicesHtml;
+
+    // 最初は次へ無効化
+    nextBtn.disabled = true;
+
+    // クリックイベント設定
+    const buttons = contentDiv.querySelectorAll("button[data-choice]");
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        // 選択肢を保存
+        selectedChoices[step] = parseInt(btn.getAttribute("data-choice"));
+        // ボタン無効化して選択不可に
+        buttons.forEach(b => b.disabled = true);
+        // 次へを有効化
+        nextBtn.disabled = false;
+      });
+    });
+  }
+
+  // 現在のパラメータ表示
+  function renderCurrentParams() {
+    contentDiv.innerHTML = renderParams();
+    nextBtn.disabled = false; // すぐに進める
+  }
+
+  // 結果の評価判定とテキスト生成
+  function getResultSummary() {
+    // 総合評価用にパラメータ平均
+    const avg = Object.values(params).reduce((a,b) => a+b,0)/6;
+
+    // 判定用しきい値
+    // 0-25 (非常に悪い), 26-50 (やや悪い), 51-75 (やや良い), 76-100 (非常に良い)
+    if(avg >= 76) return "理想的な世界";
+    if(avg >= 51) return "明るい未来";
+    if(avg >= 26) return "不安定な未来";
+    return "荒廃した世界";
+  }
+
+  // 詳細パラメータ別評価
+  function getParamEvaluation(val) {
+    if(val >= 76) return "非常に良好";
+    if(val >= 51) return "良好";
+    if(val >= 26) return "不調";
+    return "深刻";
+  }
+
+  // 結果詳細文の取得（パラメータごと）
+  const resultDetails = {
+    environment: {
+      high: "地球の緑は豊かに保たれ、清らかな水と空気に包まれた。",
+      mid: "環境問題は部分的に解決されているが、まだ課題も多い。",
+      low: "自然破壊が進み、砂漠化や汚染が深刻化している。"
+    },
+    economy: {
+      high: "経済は安定成長を続け、人々は豊かな生活を享受している。",
+      mid: "経済は不安定で、一部の地域に貧富の差が残っている。",
+      low: "経済は崩壊し、仕事や物資が枯渇している。"
+    },
+    health: {
+      high: "医療技術の進歩で多くの病気が克服され、健康寿命が延びている。",
+      mid: "医療サービスは限られ、多くの人々が十分なケアを受けられていない。",
+      low: "感染症や病気が蔓延し、多くの命が失われている。"
+    },
+    education: {
+      high: "教育は広く普及し、誰もが未来を描ける社会となっている。",
+      mid: "教育格差が存在し、一部の人だけが恩恵を受けている。",
+      low: "教育は特権階級のみのものとなり、多くの人が学べない。"
+    },
+    defense: {
+      high: "堅実な防衛体制で国家と国民が守られている。",
+      mid: "防衛力は限られており、外部からの脅威に対処が困難である。",
+      low: "防衛が崩壊し、侵略や内乱の危機にさらされている。"
+    },
+    diplomacy: {
+      high: "国際社会との強い信頼関係が築かれている。",
+      mid: "外交関係は不安定で、緊張が続いている。",
+      low: "国際的に孤立し、閉鎖的な状態が続いている。"
+    }
+  };
+
+  // 総合評価に影響を与えるための補正関数（例：どれか極端に低いパラメータがあると減点）
+  function getAdjustedScore() {
+    let sum = 0;
+    let penalty = 0;
+    for(const key in params) {
+      sum += params[key];
+      if(params[key] < 25) penalty += 20; // 極端に低いパラメータは大きなペナルティ
+    }
+    return (sum / 6) - penalty;
+  }
+
+  // 結果画面描
