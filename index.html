@@ -170,11 +170,11 @@
             <p>あなたの選択によって形成された未来:</p>
             <ul>{comments}</ul>
             {special.length > 0 && (
-              <>
-                <h3>特別な未来:</h3>
-                <ul>{special.map((s, i) => <li key={i}>{s}</li>)}</ul>
-              </>
-            )}
+  <React.Fragment>
+    <h3>特別な未来:</h3>
+    <ul>{special.map((s, i) => <li key={i}>{s}</li>)}</ul>
+  </React.Fragment>
+)}
             {renderBar("環境", stats.environment)}
             {renderBar("経済", stats.economy)}
             {renderBar("医療", stats.health)}
