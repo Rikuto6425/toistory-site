@@ -35,9 +35,16 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      transition: 0.2s;
     }
     .choice-button:hover {
       background-color: #2980b9;
+    }
+    .choice-button.selected {
+      background-color: #2ecc71;
+    }
+    .choice-button.faded {
+      opacity: 0.4;
     }
     .next-button {
       margin-top: 20px;
@@ -74,88 +81,63 @@
 
   <script>
     const questions = [
-  {
-    text: "第二次世界大戦が勃発した...",
-    choices: [
-      { text: "軍備拡張を行う", effects: { defense: 30, diplomacy: -20 } },
-      { text: "平和条約を結ぶ", effects: { diplomacy: 20 } },
-      { text: "中立を維持する", effects: { diplomacy: 10, defense: 10 } },
-    ]
-  },
-  {
-    text: "1960年代、高度経済成長期が始まった...",
-    choices: [
-      { text: "経済発展を最優先する", effects: { economy: 30, environment: -20 } },
-      { text: "環境への配慮も行う", effects: { economy: 10, environment: 10 } },
-      { text: "発展より安定を重視する", effects: { economy: 5, education: 15 } },
-    ]
-  },
-  {
-    text: "1980年代、コンピューターが普及し始めた...",
-    choices: [
-      { text: "学校に情報教育を導入する", effects: { education: 25, economy: 10 } },
-      { text: "軍事利用に集中する", effects: { defense: 20, education: -10 } },
-      { text: "公共インフラの効率化に使う", effects: { economy: 15, health: 10 } },
-    ]
-  },
-  {
-    text: "2000年代、地球温暖化が深刻化し始めた...",
-    choices: [
-      { text: "石油依存を続ける", effects: { economy: 20, environment: -25 } },
-      { text: "再生可能エネルギーに切り替える", effects: { environment: 25, economy: -10 } },
-      { text: "国際会議で他国と協調する", effects: { diplomacy: 15, environment: 10 } },
-    ]
-  },
-  {
-    text: "2020年代、世界的パンデミックが発生した...",
-    choices: [
-      { text: "国境を閉じる", effects: { defense: 10, diplomacy: -15, health: 10 } },
-      { text: "ワクチン開発に全力を注ぐ", effects: { health: 30, economy: -10 } },
-      { text: "オンライン学習を整備する", effects: { education: 20, economy: 5 } },
-    ]
-  },
-  {
-    text: "2035年、AIが社会のあらゆる場面に導入されるようになった...",
-    choices: [
-      { text: "産業をAIに置き換える", effects: { economy: 30, education: -10 } },
-      { text: "人間との共存に配慮する", effects: { education: 15, economy: 10 } },
-      { text: "利用を規制する", effects: { diplomacy: 10, economy: -10 } },
-    ]
-  },
-  {
-    text: "2040年、宇宙開発競争が激化した...",
-    choices: [
-      { text: "宇宙軍を設立する", effects: { defense: 25, economy: -10 } },
-      { text: "国際共同開発を進める", effects: { diplomacy: 20, economy: 10 } },
-      { text: "地球の問題に集中する", effects: { environment: 15, defense: -10 } },
-    ]
-  },
-  {
-    text: "2045年、地球温暖化の影響で気候が極端化した...",
-    choices: [
-      { text: "大規模な植林プロジェクトを行う", effects: { environment: 30, economy: -10 } },
-      { text: "脱炭素都市を建設する", effects: { environment: 20, economy: 10 } },
-      { text: "他国に責任を押し付ける", effects: { diplomacy: -20, economy: 10 } },
-    ]
-  },
-  {
-    text: "2050年、世界で教育格差が深刻化した...",
-    choices: [
-      { text: "国際支援で教育を広める", effects: { education: 30, diplomacy: 10 } },
-      { text: "国内教育に集中する", effects: { education: 20 } },
-      { text: "教育より経済対策を優先する", effects: { economy: 15, education: -10 } },
-    ]
-  },
-  {
-    text: "2060年、遺伝子技術が人類の寿命を延ばす時代に...",
-    choices: [
-      { text: "医療に投資する", effects: { health: 30, economy: -10 } },
-      { text: "倫理的議論を優先する", effects: { diplomacy: 10, health: -5 } },
-      { text: "技術利用を制限する", effects: { health: -10, education: 10 } },
-    ]
-  }
-];
-
+      // ---- 過去の出来事 ----
+      { text: "第二次世界大戦が勃発した...", choices: [
+        { text: "軍備拡張を行う", effects: { defense: 30, diplomacy: -20 } },
+        { text: "平和条約を結ぶ", effects: { diplomacy: 20 } },
+        { text: "中立を維持する", effects: { diplomacy: 10, defense: 10 } },
+      ]},
+      { text: "産業革命が加速した時代...", choices: [
+        { text: "工場の効率化に注力する", effects: { economy: 25, environment: -15 } },
+        { text: "労働者の権利を保護する", effects: { health: 10, economy: -10 } },
+        { text: "環境保護の法律を整備する", effects: { environment: 20, economy: -10 } },
+      ]},
+      { text: "黒死病が流行した中世ヨーロッパ...", choices: [
+        { text: "祈りに頼る", effects: { health: -20 } },
+        { text: "医療知識を研究する", effects: { health: 30, education: 10 } },
+        { text: "人々を隔離する", effects: { health: 10, diplomacy: -5 } },
+      ]},
+      { text: "冷戦時代、核の脅威が高まった...", choices: [
+        { text: "核武装を強化する", effects: { defense: 20, diplomacy: -15 } },
+        { text: "軍縮交渉を行う", effects: { diplomacy: 20, defense: -10 } },
+        { text: "情報戦を展開する", effects: { education: 10, defense: 10 } },
+      ]},
+      { text: "江戸時代、日本が鎖国していた頃...", choices: [
+        { text: "鎖国を続ける", effects: { diplomacy: -10, economy: -10 } },
+        { text: "開国して交流を始める", effects: { diplomacy: 20, economy: 10 } },
+        { text: "国内産業を保護する政策を取る", effects: { economy: 15 } },
+      ]},
+      
+      // ---- 今（中間地点）----
+      { text: "今", isCurrent: true },
+      
+      // ---- 未来の出来事 ----
+      { text: "火星移住が現実になった未来...", choices: [
+        { text: "火星開発に集中", effects: { economy: 20, environment: -10 } },
+        { text: "地球環境を優先", effects: { environment: 20, economy: -10 } },
+        { text: "両立する技術を開発", effects: { education: 10, environment: 10, economy: 10 } },
+      ]},
+      { text: "AIが社会の中心になった未来...", choices: [
+        { text: "完全自動化を推進", effects: { economy: 20, education: -10 } },
+        { text: "人間とAIの共存を目指す", effects: { education: 15, diplomacy: 10 } },
+        { text: "AI利用を制限する", effects: { defense: 10, economy: -10 } },
+      ]},
+      { text: "世界的パンデミックが再発...", choices: [
+        { text: "ワクチン開発に全力", effects: { health: 30 } },
+        { text: "外出制限と監視体制", effects: { defense: 10, diplomacy: -10, health: 10 } },
+        { text: "自然免疫に任せる", effects: { health: -20 } },
+      ]},
+      { text: "教育が完全デジタル化された未来...", choices: [
+        { text: "アクセスを平等に提供", effects: { education: 20, economy: -5 } },
+        { text: "成果主義を導入", effects: { economy: 15, education: -10 } },
+        { text: "AI教師を導入", effects: { education: 15 } },
+      ]},
+      { text: "海面上昇により都市が水没し始めた...", choices: [
+        { text: "防波堤を建設", effects: { defense: 10, environment: 10 } },
+        { text: "内陸部への移住計画", effects: { economy: -10, health: 10 } },
+        { text: "温暖化対策を強化", effects: { environment: 20 } },
+      ]},
+    ];
 
     const params = {
       environment: 50,
@@ -167,24 +149,42 @@
     };
 
     let step = 0;
-    let substep = 0;
 
     function showQuestion() {
       const q = questions[step];
       const content = document.getElementById('content');
+
+      if (q.isCurrent) {
+        showCurrentStatus();
+        return;
+      }
+
       let html = `<h2>${q.text}</h2>`;
       q.choices.forEach((c, index) => {
-        html += `<button class='choice-button' onclick='selectChoice(${index})'>${c.text}</button>`;
+        html += `<button class='choice-button' id='choice-${index}' onclick='selectChoice(${index})'>${c.text}</button>`;
       });
       content.innerHTML = html;
       document.getElementById('nextBtn').style.display = 'none';
     }
 
     function selectChoice(index) {
-      const effects = questions[step].choices[index].effects;
+      const q = questions[step];
+      const effects = q.choices[index].effects;
+
       for (const key in effects) {
         params[key] += effects[key];
       }
+
+      q.choices.forEach((_, i) => {
+        const btn = document.getElementById(`choice-${i}`);
+        if (i === index) {
+          btn.classList.add("selected");
+        } else {
+          btn.classList.add("faded");
+        }
+        btn.disabled = true;
+      });
+
       document.getElementById('nextBtn').style.display = 'block';
     }
 
@@ -195,6 +195,20 @@
       } else {
         showResults();
       }
+    }
+
+    function showCurrentStatus() {
+      const content = document.getElementById('content');
+      let html = `<h2>現在の世界の状態</h2>`;
+      html += `<div class='bar-container'>`;
+      for (const [key, val] of Object.entries(params)) {
+        html += `<div><strong>${key}</strong>
+          <div class='bar'><div class='bar-fill' style='width: ${val}%;'></div></div>
+        </div>`;
+      }
+      html += `</div><p>これまでの選択によって世界はこのように変化しました。次は未来の選択です。</p>`;
+      content.innerHTML = html;
+      document.getElementById('nextBtn').style.display = 'block';
     }
 
     function showResults() {
@@ -211,7 +225,6 @@
 
       summary += `<h2>未来の結果</h2><p><strong>${evaluation}</strong></p>`;
 
-      // 詳細2項目表示
       const sortedParams = Object.entries(params).sort((a, b) => b[1] - a[1]);
       const top = sortedParams[0];
       const second = sortedParams[1];
@@ -221,7 +234,7 @@
       if (total >= 500) {
         summary += `<p>${describeFuture(top[0], top[1])}</p>`;
         summary += `<p>${describeFuture(second[0], second[1])}</p>`;
-      } else if (total >= 400 || total >= 300) {
+      } else if (total >= 300) {
         summary += `<p>${describeFuture(top[0], top[1])}</p>`;
         summary += `<p>${describeFuture(bottom[0], bottom[1])}</p>`;
       } else {
@@ -229,7 +242,6 @@
         summary += `<p>${describeFuture(secondBottom[0], secondBottom[1])}</p>`;
       }
 
-      // グラフ
       summary += `<div class='bar-container'>`;
       for (const [key, val] of Object.entries(params)) {
         summary += `<div><strong>${key}</strong>
