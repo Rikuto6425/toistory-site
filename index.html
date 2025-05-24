@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>未来選択シミュレーション</title>
+  <title>遠いストーリー</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -74,7 +74,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>未来選択シミュレーション</h1>
+    <h1>遠いストーリー</h1>
     <div id="content"></div>
     <button class="next-button" id="nextBtn" onclick="handleNext()" style="display: none;">次へ</button>
   </div>
@@ -82,41 +82,36 @@
   <script>
     const questions = [
       // ---- 過去の出来事 ----
-      { text: "第二次世界大戦が勃発した...", choices: [
-        { text: "軍備拡張を行う", effects: { defense: 30, diplomacy: -20 } },
-        { text: "平和条約を結ぶ", effects: { diplomacy: 20 } },
-        { text: "中立を維持する", effects: { diplomacy: 10, defense: 10 } },
+       { text: "黒死病が流行した中世ヨーロッパ...", choices: [
+        { text: "祈りに頼る", effects: { health: -20 } },
+        { text: "医療知識を研究する", effects: { health: 30, education: 10 } },
+        { text: "人々を隔離する", effects: { health: 10, diplomacy: -5 } },
       ]},
-      { text: "産業革命が加速した時代...", choices: [
+       { text: "江戸時代、日本が鎖国していた頃...", choices: [
+        { text: "鎖国を続ける", effects: { diplomacy: -10, economy: -10 } },
+        { text: "開国して交流を始める", effects: { diplomacy: 20, economy: 10 } },
+        { text: "国内産業を保護する政策を取る", effects: { economy: 15 } },
+      ]},
+       { text: "産業革命が加速した時代...", choices: [
         { text: "工場の効率化に注力する", effects: { economy: 25, environment: -15 } },
         { text: "労働者の権利を保護する", effects: { health: 10, economy: -10 } },
         { text: "環境保護の法律を整備する", effects: { environment: 20, economy: -10 } },
       ]},
-      { text: "黒死病が流行した中世ヨーロッパ...", choices: [
-        { text: "祈りに頼る", effects: { health: -20 } },
-        { text: "医療知識を研究する", effects: { health: 30, education: 10 } },
-        { text: "人々を隔離する", effects: { health: 10, diplomacy: -5 } },
+      { text: "第二次世界大戦が勃発した...", choices: [
+        { text: "軍備拡張を行う", effects: { defense: 30, diplomacy: -20 } },
+        { text: "平和条約を結ぶ", effects: { diplomacy: 20 } },
+        { text: "中立を維持する", effects: { diplomacy: 10, defense: 10 } },
       ]},
       { text: "冷戦時代、核の脅威が高まった...", choices: [
         { text: "核武装を強化する", effects: { defense: 20, diplomacy: -15 } },
         { text: "軍縮交渉を行う", effects: { diplomacy: 20, defense: -10 } },
         { text: "情報戦を展開する", effects: { education: 10, defense: 10 } },
       ]},
-      { text: "江戸時代、日本が鎖国していた頃...", choices: [
-        { text: "鎖国を続ける", effects: { diplomacy: -10, economy: -10 } },
-        { text: "開国して交流を始める", effects: { diplomacy: 20, economy: 10 } },
-        { text: "国内産業を保護する政策を取る", effects: { economy: 15 } },
-      ]},
       
       // ---- 今（中間地点）----
       { text: "今", isCurrent: true },
       
       // ---- 未来の出来事 ----
-      { text: "火星移住が現実になった未来...", choices: [
-        { text: "火星開発に集中", effects: { economy: 20, environment: -10 } },
-        { text: "地球環境を優先", effects: { environment: 20, economy: -10 } },
-        { text: "両立する技術を開発", effects: { education: 10, environment: 10, economy: 10 } },
-      ]},
       { text: "AIが社会の中心になった未来...", choices: [
         { text: "完全自動化を推進", effects: { economy: 20, education: -10 } },
         { text: "人間とAIの共存を目指す", effects: { education: 15, diplomacy: 10 } },
@@ -136,6 +131,11 @@
         { text: "防波堤を建設", effects: { defense: 10, environment: 10 } },
         { text: "内陸部への移住計画", effects: { economy: -10, health: 10 } },
         { text: "温暖化対策を強化", effects: { environment: 20 } },
+      ]},
+      { text: "火星移住が現実になった未来...", choices: [
+        { text: "火星開発に集中", effects: { economy: 20, environment: -10 } },
+        { text: "地球環境を優先", effects: { environment: 20, economy: -10 } },
+        { text: "両立する技術を開発", effects: { education: 10, environment: 10, economy: 10 } },
       ]},
     ];
 
